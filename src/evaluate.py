@@ -11,19 +11,15 @@ from sklearn.metrics import (
     confusion_matrix
 )
 
-# 1. Load test data
 test_data = pd.read_csv("data/processed/test.csv")
 
 X_test = test_data.drop(columns=["Mental_Health_Risk"])
 y_test = test_data["Mental_Health_Risk"]
 
-# 2. Load trained model
 model = joblib.load("models/best_model.pkl")
 
-# 3. Make predictions
 y_pred = model.predict(X_test)
 
-# 4. Calculate metrics
 accuracy = accuracy_score(y_test, y_pred)
 
 print("Accuracy:", round(accuracy, 4))
@@ -37,7 +33,6 @@ report = classification_report(
 
 print(classification_report(y_test, y_pred))
 
-# 5. Save metrics
 with open("reports/metrics.json", "w") as file:
     json.dump(
         {"accuracy": accuracy},
@@ -48,7 +43,6 @@ with open("reports/metrics.json", "w") as file:
 with open("reports/classification_report.json", "w") as file:
     json.dump(report, file, indent=4)
 
-# 6. Confusion matrix
 cm = confusion_matrix(
     y_test,
     y_pred,

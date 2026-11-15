@@ -14,13 +14,11 @@ from sklearn.ensemble import RandomForestClassifier
 
 from sklearn.model_selection import cross_val_score
 
-# 1. Load training data
 train_data = pd.read_csv("data/processed/train.csv")
 
 X_train = train_data.drop(columns=["Mental_Health_Risk"])
 y_train = train_data["Mental_Health_Risk"]
 
-# 2. Identify numerical and categorical columns
 numerical_columns = X_train.select_dtypes(
     include="number"
 ).columns
@@ -29,25 +27,21 @@ categorical_columns = X_train.select_dtypes(
     exclude="number"
 ).columns
 
-# 3. Numerical preprocessing
 numerical_pipeline = Pipeline([
     ("imputer", SimpleImputer(strategy="median")),
     ("scaler", StandardScaler())
 ])
 
-# 4. Categorical preprocessing
 categorical_pipeline = Pipeline([
     ("imputer", SimpleImputer(strategy="most_frequent")),
     ("encoder", OneHotEncoder(handle_unknown="ignore"))
 ])
 
-# 5. Combine preprocessing
 preprocessor = ColumnTransformer([
     ("num", numerical_pipeline, numerical_columns),
     ("cat", categorical_pipeline, categorical_columns)
 ])
 
-# 6. Define models
 models = {
     "Logistic Regression": LogisticRegression(max_iter=2000),
     "Decision Tree": DecisionTreeClassifier(random_state=42),
@@ -57,7 +51,6 @@ models = {
     )
 }
 
-# 7. Train and compare models
 best_score = 0
 best_model = None
 best_model_name = ""
@@ -86,13 +79,10 @@ for name, model in models.items():
         best_model = pipeline
         best_model_name = name
 
-# 8. Train the best model on all training data
 best_model.fit(X_train, y_train)
 
-# 9. Save model
 joblib.dump(best_model, "models/best_model.pkl")
 
-# 10. Save model information
 print("\nBest model:", best_model_name)
 print("Best F1 Macro:", round(best_score, 4))
 print("Model saved successfully!")
